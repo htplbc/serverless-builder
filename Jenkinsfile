@@ -1,6 +1,9 @@
 def build = "${env.BRANCH_NAME}".replace('-', '').replace('/', '').replace('_','')
 
 pipeline {
+    agent {
+        any
+    }
     stages {
         stage('Environment Version') {
           steps {
