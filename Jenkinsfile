@@ -1,4 +1,6 @@
 def build = "${env.BRANCH_NAME}".replace('-', '').replace('/', '').replace('_','')
+def OWNER = 'htplbc'
+def IMAGE = 'node-serverless'
 
 pipeline {
     agent any
@@ -7,18 +9,24 @@ pipeline {
         stage('Environment Version') {
           steps {
             echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-            sh 'docker --version'
+            sh "docker --version"
           }
         }
         stage('Build'){
           steps {
-            sh "./build.sh"
+            sh "docker build -t ${env.OWNER}/${env.IMAGE}:latest ."
+          }
+        }
+        stage('Tag'){
+          steps {
+            sh "docker tag ${env.OWNER}/${env.IMAGE}:latest ${env.OWNER}/${env.IMAGE}:${env.BUILD_NUMBER}"
           }
         }
         stage('Deploy'){
           steps {
             withDockerRegistry([credentialsId: 'dockerhub-htplbc', url: 'https://index.docker.io/v1/']) {
-              sh "./release.sh"
+              sh "docker push ${env.OWNER}/${env.IMAGE}:latest"
+              sh "docker push ${env.OWNER}/${env.IMAGE}:${env.BUILD_NUMBER}"
             }
           }
         }
