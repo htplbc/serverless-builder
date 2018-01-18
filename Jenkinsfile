@@ -1,9 +1,8 @@
 def build = "${env.BRANCH_NAME}".replace('-', '').replace('/', '').replace('_','')
 
 pipeline {
-    agent {
-        any
-    }
+    agent any
+
     stages {
         stage('Environment Version') {
           steps {
@@ -18,7 +17,7 @@ pipeline {
         }
         stage('Deploy'){
           steps {
-            withDockerRegistry([credentialsId: 'dockerhub-htplbc']) {
+            withDockerRegistry([credentialsId: 'dockerhub-htplbc', url: 'https://index.docker.io/v1/']) {
               sh "./release.sh"
             }
           }
