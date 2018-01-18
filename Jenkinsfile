@@ -14,19 +14,19 @@ pipeline {
         }
         stage('Build'){
           steps {
-            sh "docker build -t ${env.OWNER}/${env.IMAGE}:latest ."
+            sh "docker build -t ${OWNER}/${IMAGE}:latest ."
           }
         }
         stage('Tag'){
           steps {
-            sh "docker tag ${env.OWNER}/${env.IMAGE}:latest ${env.OWNER}/${env.IMAGE}:${env.BUILD_NUMBER}"
+            sh "docker tag ${OWNER}/${IMAGE}:latest ${OWNER}/${IMAGE}:${env.BUILD_NUMBER}"
           }
         }
         stage('Deploy'){
           steps {
             withDockerRegistry([credentialsId: 'dockerhub-htplbc', url: 'https://index.docker.io/v1/']) {
-              sh "docker push ${env.OWNER}/${env.IMAGE}:latest"
-              sh "docker push ${env.OWNER}/${env.IMAGE}:${env.BUILD_NUMBER}"
+              sh "docker push ${OWNER}/${IMAGE}:latest"
+              sh "docker push ${OWNER}/${IMAGE}:${env.BUILD_NUMBER}"
             }
           }
         }
